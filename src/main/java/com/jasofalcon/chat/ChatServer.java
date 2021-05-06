@@ -26,6 +26,8 @@ public class ChatServer extends WebSocketServer {
 
     private Set<WebSocket> conns;
 
+    private int currentTourID;
+
     private ChatServer(int port) {
         super(new InetSocketAddress(port));
         conns = new HashSet<>();
@@ -62,7 +64,10 @@ public class ChatServer extends WebSocketServer {
 
             switch (msg.getType()) {
                 case USER_JOINED:
-                    addUser(new User(msg.getUser().getName()), conn);
+                    User user = new User(msg.getUser().getName());
+                    user.setTourID(msg.getTourID());
+                    currentTourID = msg.getTourID();
+                    addUser(user, conn);
                     break;
                 case USER_LEFT:
                     removeUser(conn);
@@ -90,11 +95,18 @@ public class ChatServer extends WebSocketServer {
     }
 
     private void broadcastMessage(Message msg) {
+        int msgTourID;
+        int usrSockTourID;
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             String messageJson = mapper.writeValueAsString(msg);
             for (WebSocket sock : conns) {
-                sock.send(messageJson);
+                usrSockTourID = this.users.get(sock).getTourID();
+
+                if (currentTourID == usrSockTourID) {
+                    sock.send(messageJson);
+                }
             }
         } catch (JsonProcessingException e) {
             logger.error("Cannot convert message to json.");

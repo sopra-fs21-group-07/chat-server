@@ -8,6 +8,17 @@ public class User implements Serializable {
     private String id;
     private String name;
 
+    public int getTourID() {
+        return tourID;
+    }
+
+    public void setTourID(int tourID) {
+        this.tourID = tourID;
+    }
+
+    private int tourID;
+
+
     public User() {
     }
 

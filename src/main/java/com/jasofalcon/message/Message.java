@@ -13,6 +13,16 @@ public class Message implements Serializable{
     private MessageType type;
     private String data;
 
+    public int getTourID() {
+        return tourID;
+    }
+
+    public void setTourID(int tourID) {
+        this.tourID = tourID;
+    }
+
+    private int tourID;
+
     public MessageType getType() {
         return type;
     }
