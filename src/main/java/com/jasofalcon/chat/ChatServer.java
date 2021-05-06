@@ -74,6 +74,7 @@ public class ChatServer extends WebSocketServer {
                     break;
                 case TEXT_MESSAGE:
                     currentTourID = msg.getTourID();
+                    users.get(conn).setTourID(currentTourID);
                     broadcastMessage(msg);
             }
 
