@@ -73,6 +73,7 @@ public class ChatServer extends WebSocketServer {
                     removeUser(conn);
                     break;
                 case TEXT_MESSAGE:
+                    currentTourID = msg.getTourID();
                     broadcastMessage(msg);
             }
 
@@ -103,7 +104,6 @@ public class ChatServer extends WebSocketServer {
             String messageJson = mapper.writeValueAsString(msg);
             for (WebSocket sock : conns) {
                 usrSockTourID = this.users.get(sock).getTourID();
-
                 if (currentTourID == usrSockTourID) {
                     sock.send(messageJson);
                 }
