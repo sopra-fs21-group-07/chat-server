@@ -3,6 +3,7 @@ package com.jasofalcon.chat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.jasofalcon.message.Message;
 import com.jasofalcon.message.MessageType;
 import com.jasofalcon.user.User;
@@ -23,7 +24,6 @@ public class ChatServer extends WebSocketServer {
     private final static Logger logger = LogManager.getLogger(ChatServer.class);
 
     private HashMap<WebSocket, User> users;
-
     private Set<WebSocket> conns;
 
     private ChatServer(int port) {
@@ -62,7 +62,7 @@ public class ChatServer extends WebSocketServer {
 
             switch (msg.getType()) {
                 case USER_JOINED:
-                    addUser(new User(msg.getUser().getName()), conn);
+                    addUser(new User(msg.getUser().getName()), conn, msg.getTourID());
                     break;
                 case USER_LEFT:
                     removeUser(conn);
@@ -91,17 +91,22 @@ public class ChatServer extends WebSocketServer {
 
     private void broadcastMessage(Message msg) {
         ObjectMapper mapper = new ObjectMapper();
+
         try {
             String messageJson = mapper.writeValueAsString(msg);
             for (WebSocket sock : conns) {
-                sock.send(messageJson);
+
+                if (msg.getUser().getTourID() == this.users.get(sock).getTourID()) {
+                    sock.send(messageJson);
+                }
             }
         } catch (JsonProcessingException e) {
             logger.error("Cannot convert message to json.");
         }
     }
 
-    private void addUser(User user, WebSocket conn) throws JsonProcessingException {
+    private void addUser(User user, WebSocket conn, String tourID) throws JsonProcessingException {
+        user.setTourID(tourID);
         users.put(conn, user);
         acknowledgeUserJoined(user, conn);
         broadcastUserActivityMessage(MessageType.USER_JOINED);

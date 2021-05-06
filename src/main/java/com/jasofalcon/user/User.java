@@ -6,22 +6,31 @@ import java.util.UUID;
 
 public class User implements Serializable {
     private String id;
-    private String name;
+    private String user;
 
+    public String getTourID() {
+        return tourID;
+    }
+
+    public void setTourID(String tourID) {
+        this.tourID = tourID;
+    }
+
+    private String tourID;
     public User() {
     }
 
-    public User(String name) {
-        this.name = name;
+    public User(String user) {
+        this.user = user;
         id = UUID.randomUUID().toString();
     }
 
     public String getName() {
-        return this.name;
+        return this.user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getId() {
@@ -34,7 +43,7 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, user);
     }
 
     @Override
@@ -44,6 +53,6 @@ public class User implements Serializable {
 
         User other = (User) o;
 
-        return Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name);
+        return Objects.equals(this.id, other.id) && Objects.equals(this.user, other.user);
     }
 }

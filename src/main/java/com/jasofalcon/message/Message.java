@@ -13,6 +13,8 @@ public class Message implements Serializable{
     private MessageType type;
     private String data;
 
+    private String tourID;
+
     public MessageType getType() {
         return type;
     }
@@ -35,5 +37,14 @@ public class Message implements Serializable{
 
     public String getData(){
         return data;
+    }
+
+
+    public String getTourID() {
+        return tourID;
+    }
+
+    public void setTourID(String tourID) {
+        this.tourID = tourID;
     }
 }
